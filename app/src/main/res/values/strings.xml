@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">MovieCenter</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="movie_img">image_movie</string>
+</resources>
