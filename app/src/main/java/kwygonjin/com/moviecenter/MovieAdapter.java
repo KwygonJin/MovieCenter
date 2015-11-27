@@ -49,30 +49,23 @@ public class MovieAdapter extends BaseAdapter {
         ViewHolder viewHolder;
 
         if(convertView == null) {
-            // inflate the GridView item layout
             LayoutInflater inflater = LayoutInflater.from(context);
             convertView = inflater.inflate(R.layout.movie_list, parent, false);
 
-            // initialize the view holder
             viewHolder = new ViewHolder();
             viewHolder.movieImage = (ImageView) convertView.findViewById(R.id.movieImg);
-            //viewHolder.movieName = (TextView) convertView.findViewById(R.id.movieName);
             int height = parent.getHeight();
             if (height > 0) {
                 ViewGroup.LayoutParams layoutParams = convertView.getLayoutParams();
                 layoutParams.height = (int) (height / 2);
-            } // for the 1st item parent.getHeight() is not calculated yet
-            //viewHolder.movieImage.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, MainActivity.);
+            }
             convertView.setTag(viewHolder);
         } else {
-            // recycle the already inflated view
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        // update the item view
         Movie item = movies.get(position);
-        Picasso.with(context).load(item.getImgURL()).into(viewHolder.movieImage);
-        //viewHolder.movieName.setText(item.getName());
+        Picasso.with(context).load(item.getImgURL()).fit().into(viewHolder.movieImage);
 
         return convertView;
     }

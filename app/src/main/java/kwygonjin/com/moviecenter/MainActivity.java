@@ -1,5 +1,9 @@
 package kwygonjin.com.moviecenter;
 
+import android.app.ActionBar;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +12,8 @@ import android.text.TextUtils;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -51,6 +57,14 @@ public class MainActivity extends AppCompatActivity {
         GridView gridView = (GridView) findViewById(R.id.gridView);
         gridView.setAdapter(new MovieAdapter(this, movies));
 
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v,
+                                    int position, long id) {
+                Intent intent = new Intent(MainActivity.this, MovieAdv_Activity.class);
+                intent.putExtra("movie_object", movies.get(position));
+                startActivity(intent);
+            }
+        });
     }
 
     private void initData() {
@@ -98,7 +112,6 @@ public class MainActivity extends AppCompatActivity {
                 json = buffer.toString();
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attemping to parse it.
                 return null;
             } finally {
                 if (urlConnection != null) urlConnection.disconnect();
