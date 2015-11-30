@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="filmsToShow">
+        <item name="all">All films</item>
+        <item name="only_favorite">Only favorite</item>
+    </string-array>
+    <string-array name="filmsToShowValues">
+        <item name="all">All films</item>
+        <item name="only_favorite">Only favorite</item>
+    </string-array>
+
+</resources>

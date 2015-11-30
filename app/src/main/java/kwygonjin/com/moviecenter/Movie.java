@@ -7,16 +7,21 @@ import android.os.Parcelable;
  * Created by KwygonJin on 26.11.2015.
  */
 public class Movie implements Parcelable {
+    private String id;
     private String name;
     private String year;
     private String desc;
     private String imgURL;
+    private boolean favorite;
+    private static final String IMAGE_PATH = "http://image.tmdb.org/t/p/original";
 
-    public Movie(String name, String year, String desc, String imgURL) {
+    public Movie(String id, String name, String year, String desc, String imgURL, boolean favorite) {
+        this.id = id;
         this.name = name;
         this.year = year;
         this.desc = desc;
-        this.imgURL = imgURL;
+        this.imgURL = IMAGE_PATH + imgURL;
+        this.favorite = favorite;
     }
 
     public String getName() {
@@ -51,8 +56,25 @@ public class Movie implements Parcelable {
         this.imgURL = imgURL;
     }
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
     public Movie(Parcel in) {
         readFromParcel(in);
+    }
+
+
+    public boolean isFavorite() {
+        return favorite;
+    }
+
+    public void setFavorite(boolean favorite) {
+        this.favorite = favorite;
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {
@@ -72,11 +94,11 @@ public class Movie implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-
         dest.writeString(name);
         dest.writeString(year);
         dest.writeString(desc);
         dest.writeString(imgURL);
+        dest.writeString(id);
     }
 
     private void readFromParcel(Parcel in ) {
@@ -84,5 +106,7 @@ public class Movie implements Parcelable {
         this.year = in.readString();
         this.desc = in.readString();
         this.imgURL = in.readString();
+        this.id = in.readString();
     }
+
 }

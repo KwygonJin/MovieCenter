@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <PreferenceCategory
+        android:title="Main settings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <ListPreference
+            android:title="List Preference"
+            android:summary="This preference allows to select an item in a array"
+            android:key="filmsToShowf"
+            android:entries="@array/filmsToShow"
+            android:entryValues="@array/filmsToShowValues"
+            android:layout_height="match_parent"
+            android:layout_width="match_parent" />
+        <EditTextPreference
+            android:name="Number of films preference"
+            android:summary="This allows you to enter number of films"
+            android:defaultValue= "200"
+            android:title="Number of films"
+            android:key="editNumberOfFilms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </PreferenceCategory>
+</PreferenceScreen>
