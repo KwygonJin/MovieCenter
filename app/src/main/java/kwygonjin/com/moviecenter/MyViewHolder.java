@@ -111,7 +111,7 @@ public class MyViewHolder extends RecyclerView.Adapter<MyViewHolder.MovieViewHol
     }
 
     private void initData() {
-        prefs = context.getSharedPreferences(MainActivity.APP_PREF, 0);
+        prefs = context.getSharedPreferences(MainActivity.APP_PREF, context.MODE_PRIVATE);
         Set<String> favoriteFilmsId = prefs.getStringSet(MainActivity.APP_PREF_KEY, new HashSet<String>());
         MovieFetcherAsync task = new MovieFetcherAsync();
         task.execute(new Uri.Builder()
