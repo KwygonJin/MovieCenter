@@ -8,9 +8,9 @@
     android:orientation="vertical"
     android:columnCount="2"
     android:rowCount="4"
-    android:background="#2196F3">
+    android:background="@color/azure">
 
-        <ImageView
+    <ImageView
             android:id="@+id/movieImg"
             android:layout_width="match_parent"
             android:gravity="center_horizontal"
@@ -26,5 +26,6 @@
         style="?android:attr/starStyle"
         android:id="@+id/favorite"
         android:layout_weight="8" />
+
 
 </LinearLayout>

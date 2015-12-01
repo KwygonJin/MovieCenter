@@ -1,6 +1,7 @@
 package kwygonjin.com.moviecenter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -12,7 +13,6 @@ import android.view.ViewGroup;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -34,7 +34,7 @@ import java.util.Set;
 /**
  * Created by KwygonJin on 26.11.2015.
  */
-public class MyViewHolder extends RecyclerView.Adapter<MyViewHolder.MovieViewHolder> {
+public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewHolder> {
     public static String LOG_TAG = "my_log";
 
     private Context context;
@@ -50,10 +50,10 @@ public class MyViewHolder extends RecyclerView.Adapter<MyViewHolder.MovieViewHol
     private static final String PARAM_API_KEY = "api_key";
     private static final String API_KEY = "cdc3a5a6e72d6b9235fce3707259f255"; //REMOVED
 
-    public static class MovieViewHolder extends RecyclerView.ViewHolder {
+    public class MovieViewHolder extends RecyclerView.ViewHolder {
 
-        ImageView movieImg;
-        CheckBox favorite;
+        protected ImageView movieImg;
+        protected CheckBox favorite;
 
         MovieViewHolder(View itemView) {
             super(itemView);
@@ -63,7 +63,7 @@ public class MyViewHolder extends RecyclerView.Adapter<MyViewHolder.MovieViewHol
         }
     }
 
-    MyViewHolder(Context context){
+    MyViewAdapter(Context context){
         this.context = context;
         initData();
     }
@@ -75,12 +75,19 @@ public class MyViewHolder extends RecyclerView.Adapter<MyViewHolder.MovieViewHol
 
     @Override
     public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_list, viewGroup, false);
+        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_list, null);
         MovieViewHolder mvh = new MovieViewHolder(v);
-        final Movie movie;
+
+        return mvh;
+    }
+
+    @Override
+    public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
+        Picasso.with(context).load(movies.get(i).getImgURL()).resize(200, 200).into(movieViewHolder.movieImg);
+        movieViewHolder.favorite.setChecked(movies.get(i).isFavorite());
+        final Movie movie = movies.get(i);
         if (favoriteFilmsId != null) {
-            movie = movies.get(i);
-            mvh.favorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            movieViewHolder.favorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                         @Override
                                                         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                                                             if (movie != null) {
@@ -96,13 +103,15 @@ public class MyViewHolder extends RecyclerView.Adapter<MyViewHolder.MovieViewHol
                                                     }
             );
         }
-        return mvh;
-    }
 
-    @Override
-    public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
-        Picasso.with(context).load(movies.get(i).getImgURL()).resize(200, 200).into(movieViewHolder.movieImg);
-        movieViewHolder.favorite.setChecked(movies.get(i).isFavorite());
+        movieViewHolder.movieImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, MovieAdv_Activity.class);
+                intent.putExtra("movie_object", movie);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

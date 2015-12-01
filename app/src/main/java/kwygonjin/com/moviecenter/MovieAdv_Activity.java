@@ -26,7 +26,7 @@ public class MovieAdv_Activity extends AppCompatActivity {
         Movie movie = getIntent().getExtras().getParcelable("movie_object");
         this.setTitle("Movie: " + movie.getName());
         if (!movie.getImgURL().isEmpty())
-            Picasso.with(context).load(movie.getImgURL()).fit().into(iv);
+            Picasso.with(this).load(movie.getImgURL()).resize(70, 70).into(iv);
         if (!movie.getName().isEmpty())
             movieName.setText(movie.getName());
         if (!movie.getYear().isEmpty())
