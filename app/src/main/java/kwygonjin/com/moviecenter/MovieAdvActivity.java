@@ -1,16 +1,14 @@
 package kwygonjin.com.moviecenter;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
-public class MovieAdv_Activity extends AppCompatActivity {
+public class MovieAdvActivity extends AppCompatActivity {
     private Context context;
 
     @Override
