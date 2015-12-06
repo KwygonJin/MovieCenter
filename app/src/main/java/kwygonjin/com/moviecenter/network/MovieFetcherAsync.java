@@ -1,6 +1,9 @@
-package kwygonjin.com.moviecenter;
+package kwygonjin.com.moviecenter.network;
 
+import android.content.Context;
 import android.os.AsyncTask;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -13,16 +16,22 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+
+import kwygonjin.com.moviecenter.MainActivity;
+import kwygonjin.com.moviecenter.items.Movie;
+import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
 
 /**
  * Created by KwygonJin on 01.12.2015.
  */
 public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
-    private List<Movie> movies;
 
-    MovieFetcherAsync (List<Movie> movies) {
-        this.movies = movies;
+    private Context context;
+
+    public MovieFetcherAsync(Context context) {
+        this.context = context;
     }
 
     @Override
@@ -65,6 +74,9 @@ public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
                 }
             }
         }
+
+        MovieHTTPParse.parseJSON(json);
+
         return json;
     }
 
@@ -77,23 +89,10 @@ public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
             return;
         }
 
-        try {
-            JSONObject jsonObject= new JSONObject(result);
-            JSONArray jsonArray = jsonObject.getJSONArray("results");
-            for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject jsonObjectArr = jsonArray.getJSONObject(i);
-                String id = jsonObjectArr.getString("id");
-                boolean isFav = false;
-                if (MainActivity.favoriteFilmsId.contains(id))
-                    isFav = true;
-                movies.add(new Movie(id, jsonObjectArr.getString("title"),
-                        jsonObjectArr.getString("release_date"),
-                        jsonObjectArr.getString("overview"),
-                        jsonObjectArr.getString("poster_path"), isFav));
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
+        if (!result.isEmpty()) {
+            return;
         }
 
     }
+
 }

@@ -8,6 +8,8 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import kwygonjin.com.moviecenter.items.Movie;
+
 public class MovieAdvActivity extends AppCompatActivity {
     private Context context;
 
@@ -23,8 +25,10 @@ public class MovieAdvActivity extends AppCompatActivity {
 
         Movie movie = getIntent().getExtras().getParcelable("movie_object");
         this.setTitle("Movie: " + movie.getName());
-        if (!movie.getImgURL().isEmpty())
-            Picasso.with(this).load(movie.getImgURL()).resize(70, 70).into(iv);
+        if (!movie.getImgURL(Movie.WIDTH_500).isEmpty())
+            Picasso.with(this).load(movie.getImgURL(Movie.WIDTH_500)).into(iv);
+        else
+            iv.setImageResource(R.drawable.place_holder);
         if (!movie.getName().isEmpty())
             movieName.setText(movie.getName());
         if (!movie.getYear().isEmpty())
