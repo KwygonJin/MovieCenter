@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
         while (MovieHTTPParse.movies.isEmpty()){
             b = true;
         }
-        recyclerView.setAdapter(new MyViewAdapter(MainActivity.this, MovieHTTPParse.movies));
+        recyclerView.setAdapter(new MyViewAdapter(MainActivity.this));
     }
 
     @Override

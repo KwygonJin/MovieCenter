@@ -21,6 +21,7 @@ import kwygonjin.com.moviecenter.MainActivity;
 import kwygonjin.com.moviecenter.items.Movie;
 import kwygonjin.com.moviecenter.MovieAdvActivity;
 import kwygonjin.com.moviecenter.R;
+import kwygonjin.com.moviecenter.network.MovieHTTPParse;
 import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
 
 /**
@@ -45,12 +46,12 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
             favorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                                     @Override
                                                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                                        if (movies.get(position) != null) {
-                                                                            movies.get(position).setFavorite(isChecked);
+                                                                        if (MovieHTTPParse.movies.get(position) != null) {
+                                                                            MovieHTTPParse.movies.get(position).setFavorite(isChecked);
                                                                             if (isChecked)
-                                                                                MainActivity.favoriteFilmsId.add(movies.get(position).getId());
+                                                                                MainActivity.favoriteFilmsId.add(MovieHTTPParse.movies.get(position).getId());
                                                                             else
-                                                                                MainActivity.favoriteFilmsId.remove(movies.get(position).getId());
+                                                                                MainActivity.favoriteFilmsId.remove(MovieHTTPParse.movies.get(position).getId());
 
                                                                             SharedPreferences.Editor e = MainActivity.prefs.edit();
                                                                             e.putStringSet(MainActivity.APP_PREF_KEY, MainActivity.favoriteFilmsId);
@@ -68,14 +69,13 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(context, MovieAdvActivity.class);
-            intent.putExtra("movie_object", movies.get(position));
+            intent.putExtra("movie_object", MovieHTTPParse.movies.get(position));
             context.startActivity(intent);
         }
     }
 
-    public MyViewAdapter(Context context, List<Movie> movies){
+    public MyViewAdapter(Context context){
         this.context = context;
-        this.movies = movies;
     }
 
     @Override
@@ -87,21 +87,22 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
     public MovieViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.movie_list, null);
         MovieViewHolder mvh = new MovieViewHolder(v);
+        //mvh.setPosition(i);
         return mvh;
     }
 
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
         movieViewHolder.setPosition(i);
-        Picasso.with(context).load(movies.get(i).getImgURL(Movie.WIDTH_780)).placeholder(R.drawable.place_holder).into(movieViewHolder.movieImg);
-        movieViewHolder.favorite.setChecked(movies.get(i).isFavorite());
-        if (i + Constants.DEFAULT_ITEM_NUMBER_PREDOWLOAD >= movies.size())
-            MovieHTTPRequest.doRequest(context, (movies.size()/20) + 1);
+        Picasso.with(context).load(MovieHTTPParse.movies.get(i).getImgURL(Movie.WIDTH_342)).placeholder(R.drawable.place_holder).into(movieViewHolder.movieImg);
+        movieViewHolder.favorite.setChecked(MovieHTTPParse.movies.get(i).isFavorite());
+        if (i + Constants.DEFAULT_ITEM_NUMBER_PREDOWLOAD >= getItemCount())
+            MovieHTTPRequest.doRequest(context, (MovieHTTPParse.movies.size()/20) + 1);
    }
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return MovieHTTPParse.movies.size();
     }
 
 
