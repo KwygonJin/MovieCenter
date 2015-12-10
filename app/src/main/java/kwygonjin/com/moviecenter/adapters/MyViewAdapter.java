@@ -21,6 +21,7 @@ import kwygonjin.com.moviecenter.MainActivity;
 import kwygonjin.com.moviecenter.items.Movie;
 import kwygonjin.com.moviecenter.MovieAdvActivity;
 import kwygonjin.com.moviecenter.R;
+import kwygonjin.com.moviecenter.items.MovieListSingleton;
 import kwygonjin.com.moviecenter.network.MovieHTTPParse;
 import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
 
@@ -46,12 +47,12 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
             favorite.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                                     @Override
                                                                     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                                                                        if (MovieHTTPParse.movies.get(position) != null) {
-                                                                            MovieHTTPParse.movies.get(position).setFavorite(isChecked);
+                                                                        if (MovieListSingleton.getInstance().getMovieList().get(position) != null) {
+                                                                            MovieListSingleton.getInstance().getMovieList().get(position).setFavorite(isChecked);
                                                                             if (isChecked)
-                                                                                MainActivity.favoriteFilmsId.add(MovieHTTPParse.movies.get(position).getId());
+                                                                                MainActivity.favoriteFilmsId.add(MovieListSingleton.getInstance().getMovieList().get(position).getId());
                                                                             else
-                                                                                MainActivity.favoriteFilmsId.remove(MovieHTTPParse.movies.get(position).getId());
+                                                                                MainActivity.favoriteFilmsId.remove(MovieListSingleton.getInstance().getMovieList().get(position).getId());
 
                                                                             SharedPreferences.Editor e = MainActivity.prefs.edit();
                                                                             e.putStringSet(MainActivity.APP_PREF_KEY, MainActivity.favoriteFilmsId);
@@ -69,7 +70,7 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(context, MovieAdvActivity.class);
-            intent.putExtra("movie_object", MovieHTTPParse.movies.get(position));
+            intent.putExtra("movie_object", MovieListSingleton.getInstance().getMovieList().get(position));
             context.startActivity(intent);
         }
     }
@@ -94,17 +95,16 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
         movieViewHolder.setPosition(i);
-        Picasso.with(context).load(MovieHTTPParse.movies.get(i).getImgURL(Movie.WIDTH_342)).placeholder(R.drawable.place_holder).into(movieViewHolder.movieImg);
-        movieViewHolder.favorite.setChecked(MovieHTTPParse.movies.get(i).isFavorite());
+        Picasso.with(context).load(MovieListSingleton.getInstance().getMovieList().get(i).getImgURL(Movie.WIDTH_342)).placeholder(R.drawable.place_holder).into(movieViewHolder.movieImg);
+        movieViewHolder.favorite.setChecked(MovieListSingleton.getInstance().getMovieList().get(i).isFavorite());
         if (i + Constants.DEFAULT_ITEM_NUMBER_PREDOWLOAD >= getItemCount())
-            MovieHTTPRequest.doRequest(context, (MovieHTTPParse.movies.size()/20) + 1);
+            MovieHTTPRequest.doRequest(context, (MovieListSingleton.getInstance().getMovieList().size()/20) + 1, this);
    }
 
     @Override
     public int getItemCount() {
-        return MovieHTTPParse.movies.size();
+        return MovieListSingleton.getInstance().getMovieList().size();
     }
-
 
 
 }

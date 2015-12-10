@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 
 import kwygonjin.com.moviecenter.R;
+import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
 
 /**
  * Created by KwygonJin on 06.12.2015.
@@ -20,8 +21,8 @@ public class MovieHTTPRequest {
     private static final String PARAM_PAGE = "page";
     private static final String API_KEY = "cdc3a5a6e72d6b9235fce3707259f255"; //REMOVED
 
-    public static void doRequest(Context context, int pageNumber) {
-        MovieFetcherAsync task = new MovieFetcherAsync(context);
+    public static void doRequest(Context context, int pageNumber, MyViewAdapter myViewAdapter) {
+        MovieFetcherAsync task = new MovieFetcherAsync(context, myViewAdapter);
         task.execute(new Uri.Builder()
                 .scheme(HTTP_SCHEME)
                 .authority(URL_AUTHORITY)

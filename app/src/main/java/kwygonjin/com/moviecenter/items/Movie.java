@@ -13,19 +13,23 @@ public class Movie implements Parcelable {
     private String desc;
     private String imgURL;
     private boolean favorite;
+    private long idSQLite;
+    private String rate;
     private static final String URL_IMAGE_PATH = "http://image.tmdb.org/t/p/";
     public static final String WIDTH_154 = "w154";
     public static final String WIDTH_342 = "w342";
     public static final String WIDTH_500 = "w500";
     public static final String WIDTH_780 = "w780";
 
-    public Movie(String id, String name, String year, String desc, String imgURL, boolean favorite) {
+    public Movie(String id, String name, String year, String desc, String imgURL, boolean favorite, long idSQLite, String rate) {
         this.id = id;
         this.name = name;
         this.year = year;
         this.desc = desc;
         this.imgURL = imgURL;
         this.favorite = favorite;
+        this.idSQLite = idSQLite;
+        this.rate = rate;
     }
 
     public String getName() {
@@ -78,6 +82,22 @@ public class Movie implements Parcelable {
 
     public void setFavorite(boolean favorite) {
         this.favorite = favorite;
+    }
+
+    public long getIdSQLite() {
+        return idSQLite;
+    }
+
+    public void setIdSQLite(long idSQLite) {
+        this.idSQLite = idSQLite;
+    }
+
+    public String getRate() {
+        return rate;
+    }
+
+    public void setRate(String rate) {
+        this.rate = rate;
     }
 
     public static final Parcelable.Creator CREATOR = new Parcelable.Creator() {

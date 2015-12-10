@@ -20,8 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import kwygonjin.com.moviecenter.MainActivity;
+import kwygonjin.com.moviecenter.R;
+import kwygonjin.com.moviecenter.db.MovieDBManager;
 import kwygonjin.com.moviecenter.items.Movie;
 import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
+import kwygonjin.com.moviecenter.items.MovieListSingleton;
 
 /**
  * Created by KwygonJin on 01.12.2015.
@@ -29,9 +32,11 @@ import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
 public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
 
     private Context context;
+    private MyViewAdapter myViewAdapter;
 
-    public MovieFetcherAsync(Context context) {
+    public MovieFetcherAsync(Context context, MyViewAdapter myViewAdapter) {
         this.context = context;
+        this.myViewAdapter = myViewAdapter;
     }
 
     @Override
@@ -62,6 +67,10 @@ public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
                 return null;
             json = buffer.toString();
         } catch (IOException e) {
+            MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
+            MovieDBManager movieDBManager = new MovieDBManager(context);
+            movieListSingleton.getMovieList().addAll(movieDBManager.getAll());
+
             Log.e(MainActivity.LOG_TAG, "Error ", e);
             return null;
         } finally {
@@ -75,8 +84,6 @@ public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
             }
         }
 
-        MovieHTTPParse.parseJSON(json);
-
         return json;
     }
 
@@ -86,10 +93,13 @@ public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
         super.onPostExecute(result);
 
         if (result == null) {
+            myViewAdapter.notifyDataSetChanged();
             return;
         }
 
         if (!result.isEmpty()) {
+            MovieHTTPParse.parseJSON(result, context);
+            myViewAdapter.notifyDataSetChanged();
             return;
         }
 
