@@ -9,6 +9,8 @@ import kwygonjin.com.moviecenter.interfaces.IDataManager;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import kwygonjin.com.moviecenter.items.Movie;
 import kwygonjin.com.moviecenter.items.MovieListSingleton;
@@ -19,9 +21,22 @@ import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
  */
 public class MovieDBManager implements IDataManager<Movie> {
     private MovieDBHelper movieDBHelper;
+    private static MovieDBManager mInstance = null;
+    private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+    private final Lock readLock = rwl.readLock();
+    private final Lock writeLock = rwl.writeLock();
 
-    public MovieDBManager(Context context) {
-        movieDBHelper = new MovieDBHelper(context);
+    private MovieDBManager(Context context) {
+        movieDBHelper = MovieDBHelper.getmInstance(context);
+        movieDBHelper.setWriteAheadLoggingEnabled(true);
+    }
+
+    public static MovieDBManager getInstance (Context context){
+        if(mInstance == null)
+        {
+            mInstance = new MovieDBManager(context);
+        }
+        return mInstance;
     }
 
     @Override
@@ -32,7 +47,8 @@ public class MovieDBManager implements IDataManager<Movie> {
         }
 
         SQLiteDatabase db = movieDBHelper.getWritableDatabase();
-        db.beginTransaction();
+        writeLock.lock();
+        db.beginTransactionNonExclusive();
         ContentValues cv = new ContentValues();
         cv.put(MovieDBHelper.MOVIE_TITLE, movie.getName());
         cv.put(MovieDBHelper.MOVIE_YEAR, movie.getYear());
@@ -51,6 +67,8 @@ public class MovieDBManager implements IDataManager<Movie> {
             movie.setIdSQLite(_id);
         }
         else throw new IOException();
+
+        writeLock.unlock();
         db.close();
 
         return _id;
@@ -59,13 +77,15 @@ public class MovieDBManager implements IDataManager<Movie> {
     @Override
     public boolean delete(Movie movie) throws IOException {
         SQLiteDatabase db = movieDBHelper.getWritableDatabase();
-        db.beginTransaction();
+        writeLock.lock();
+        db.beginTransactionNonExclusive();
         long res = db.delete(MovieDBHelper.TABLE_NAME_MOVIE, MovieDBHelper.MOVIE_ID + " = ? ", new String[]{movie.getId()});
         if (res != 0) {
             db.setTransactionSuccessful();
         }
         else throw new IOException();
         db.close();
+        writeLock.unlock();
         return res != 0;
     }
 
@@ -73,6 +93,7 @@ public class MovieDBManager implements IDataManager<Movie> {
     public Movie get(String id) {
         Movie movie = null;
         SQLiteDatabase db = movieDBHelper.getReadableDatabase();
+        readLock.lock();
         Cursor cursor = db.query(MovieDBHelper.TABLE_NAME_MOVIE,null ,MovieDBHelper.MOVIE_ID + " = ? ", new String[] {id}, null, null, null);
         while (cursor.moveToNext()) {
             boolean fav = false;
@@ -89,6 +110,7 @@ public class MovieDBManager implements IDataManager<Movie> {
 
         }
         db.close();
+        readLock.unlock();
         return movie;
     }
 
@@ -96,8 +118,9 @@ public class MovieDBManager implements IDataManager<Movie> {
     public List<Movie> getAll() {
 
         SQLiteDatabase db = movieDBHelper.getReadableDatabase();
+        readLock.lock();
         Cursor cursor = db.query(MovieDBHelper.TABLE_NAME_MOVIE, null, null, null, null, null, MovieDBHelper.MOVIE_RATE + " DESC ");
-                MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
+        MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
         List<Movie> movies = movieListSingleton.getMovieList();
 
         while (cursor.moveToNext()) {
@@ -115,25 +138,30 @@ public class MovieDBManager implements IDataManager<Movie> {
 
         }
         db.close();
+        readLock.unlock();
         return movies;
     }
 
     @Override
     public boolean contains(Movie movie) {
         SQLiteDatabase db = movieDBHelper.getReadableDatabase();
+        readLock.lock();
         Cursor cursor = db.query(MovieDBHelper.TABLE_NAME_MOVIE,null ,MovieDBHelper.MOVIE_ID + " = ? ", new String[] {movie.getId()}, null, null, null);
         while (cursor.moveToNext()) {
             db.close();
+            readLock.unlock();
             return true;
         }
         db.close();
+        readLock.unlock();
         return false;
     }
 
     @Override
     public boolean update(Movie movie) {
+        writeLock.lock();
         SQLiteDatabase db = movieDBHelper.getWritableDatabase();
-        db.beginTransaction();
+        db.beginTransactionNonExclusive();
         ContentValues cv = new ContentValues();
         cv.put(MovieDBHelper.MOVIE_TITLE, movie.getName());
         cv.put(MovieDBHelper.MOVIE_YEAR, movie.getYear());
@@ -152,10 +180,13 @@ public class MovieDBManager implements IDataManager<Movie> {
                 new String[]{movie.getId()});
 
         if (_id != 0) {
+            db.setTransactionSuccessful();
             db.close();
+            writeLock.unlock();
             return true;
         } else {
             db.close();
+            writeLock.unlock();
             return false;
         }
 

@@ -19,6 +19,7 @@ import java.util.Set;
 
 import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
 import kwygonjin.com.moviecenter.db.MovieDBHelper;
+import kwygonjin.com.moviecenter.db.MovieDBManager;
 import kwygonjin.com.moviecenter.items.Movie;
 import kwygonjin.com.moviecenter.items.MovieListSingleton;
 import kwygonjin.com.moviecenter.network.MovieFetcherAsync;
@@ -40,15 +41,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        MovieDBHelper movieDBHelper = new MovieDBHelper(this);
-
         prefs = getSharedPreferences(MainActivity.APP_PREF, MODE_PRIVATE);
         favoriteFilmsId = prefs.getStringSet(APP_PREF_KEY, favoriteFilmsId);
 
         MyViewAdapter myViewAdapter = new MyViewAdapter(MainActivity.this);
         MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
-        if (movieListSingleton.getMovieList().isEmpty())
-            MovieHTTPRequest.doRequest(MainActivity.this, 1,myViewAdapter);
+        if (movieListSingleton.getMovieList().isEmpty()){
+            if (MovieHTTPRequest.isInternetConnection(MainActivity.this))
+                MovieHTTPRequest.doRequest(MainActivity.this, 1,myViewAdapter);
+            else {
+                MovieDBManager movieDBManager = MovieDBManager.getInstance(MainActivity.this);
+                movieListSingleton.getMovieList().addAll(movieDBManager.getAll());
+            }
+        }
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
         gridLayoutManager = new GridLayoutManager(MainActivity.this, 2);

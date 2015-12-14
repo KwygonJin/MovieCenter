@@ -28,7 +28,7 @@ public class MovieHTTPParse {
         }
 
         try {
-            MovieDBManager movieDBManager = new MovieDBManager(context);
+            MovieDBManager movieDBManager = MovieDBManager.getInstance(context);
             JSONObject jsonObject= new JSONObject(result);
             JSONArray jsonArray = jsonObject.getJSONArray("results");
             for (int i = 0; i < jsonArray.length(); i++) {

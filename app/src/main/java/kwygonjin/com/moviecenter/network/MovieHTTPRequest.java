@@ -1,6 +1,7 @@
 package kwygonjin.com.moviecenter.network;
 
 import android.content.Context;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 
@@ -35,4 +36,11 @@ public class MovieHTTPRequest {
                 .appendQueryParameter(PARAM_API_KEY, API_KEY)
                 .build().toString());
     }
+
+    public static boolean isInternetConnection(Context context) {
+        final ConnectivityManager connectivityManager = ((ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE));
+
+        return connectivityManager.getActiveNetworkInfo() != null && connectivityManager.getActiveNetworkInfo().isConnected();
+    }
+
 }
