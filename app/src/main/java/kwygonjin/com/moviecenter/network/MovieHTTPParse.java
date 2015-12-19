@@ -37,12 +37,15 @@ public class MovieHTTPParse {
                 boolean isFav = false;
                 if (MainActivity.favoriteFilmsId.contains(id))
                     isFav = true;
+                if (MainActivity.showOnlyFavorite && !isFav)
+                    continue;
                 Movie movie = new Movie(id, jsonObjectArr.getString("title"),
                         jsonObjectArr.getString("release_date"),
                         jsonObjectArr.getString("overview"),
                         jsonObjectArr.getString("poster_path"), isFav, -1,
                         jsonObjectArr.getString("poster_path"));
-                movieListSingleton.getMovieList().add(movie);
+                if ((!MainActivity.showOnlyFavorite) || (MainActivity.showOnlyFavorite && isFav))
+                    movieListSingleton.getMovieList().add(movie);
                 movieDBManager.save(movie);
             }
         } catch (JSONException | IOException e) {

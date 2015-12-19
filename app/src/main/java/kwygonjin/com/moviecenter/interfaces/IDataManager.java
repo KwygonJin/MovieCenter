@@ -12,6 +12,6 @@ public interface IDataManager<T> {
     boolean delete(T t) throws IOException;
     T get(String id);
     List<T> getAll();
-    boolean contains(T t);
+     boolean contains(T t);
     boolean update(T t);
 }

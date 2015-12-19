@@ -14,11 +14,10 @@ public class MovieListSingleton {
         this.movies = new ArrayList<Movie>();
     }
 
-    public static MovieListSingleton getInstance(){
+    public static synchronized MovieListSingleton getInstance(){
         if(mInstance == null)
-        {
             mInstance = new MovieListSingleton();
-        }
+
         return mInstance;
     }
 

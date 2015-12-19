@@ -6,6 +6,7 @@
     <CheckBoxPreference
         android:title="@string/pref_only_fav_title"
         android:defaultValue="false"
+        android:id="@+id/set_show_only_fav"
         android:key="@string/pref_only_fav_key" />
 
 </PreferenceScreen>

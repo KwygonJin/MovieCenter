@@ -18,11 +18,11 @@ import java.util.List;
 
 import kwygonjin.com.moviecenter.Constants;
 import kwygonjin.com.moviecenter.MainActivity;
+import kwygonjin.com.moviecenter.db.MovieDBManager;
 import kwygonjin.com.moviecenter.items.Movie;
 import kwygonjin.com.moviecenter.MovieAdvActivity;
 import kwygonjin.com.moviecenter.R;
 import kwygonjin.com.moviecenter.items.MovieListSingleton;
-import kwygonjin.com.moviecenter.network.MovieHTTPParse;
 import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
 
 /**
@@ -55,8 +55,11 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
                                                                                 MainActivity.favoriteFilmsId.remove(MovieListSingleton.getInstance().getMovieList().get(position).getId());
 
                                                                             SharedPreferences.Editor e = MainActivity.prefs.edit();
-                                                                            e.putStringSet(MainActivity.APP_PREF_KEY, MainActivity.favoriteFilmsId);
+                                                                            e.putStringSet(MainActivity.APP_PREF_KEY_FILM_ID, MainActivity.favoriteFilmsId);
                                                                             e.apply();
+
+                                                                            MovieDBManager movieDBManager = MovieDBManager.getInstance(context);
+                                                                            movieDBManager.update(MovieListSingleton.getInstance().getMovieList().get(position));
                                                                         }
                                                                     }
                                                                 }
@@ -97,8 +100,8 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
         movieViewHolder.setPosition(i);
         Picasso.with(context).load(MovieListSingleton.getInstance().getMovieList().get(i).getImgURL(Movie.WIDTH_342)).placeholder(R.drawable.place_holder).into(movieViewHolder.movieImg);
         movieViewHolder.favorite.setChecked(MovieListSingleton.getInstance().getMovieList().get(i).isFavorite());
-        if (i + Constants.DEFAULT_ITEM_NUMBER_PREDOWLOAD >= getItemCount())
-            MovieHTTPRequest.doRequest(context, (MovieListSingleton.getInstance().getMovieList().size()/20) + 1, this);
+        if (i == getItemCount()-1 && !MainActivity.showOnlyFavorite)
+            MovieHTTPRequest.doRequest(context, (getItemCount()/20) + 1, this);
    }
 
     @Override

@@ -67,6 +67,8 @@ public class MovieFetcherAsync extends AsyncTask<String, Integer, String> {
                 return null;
             json = buffer.toString();
         } catch (IOException e) {
+            MovieDBManager movieDBManager = MovieDBManager.getInstance(context);
+            MovieListSingleton.getInstance().getMovieList().addAll(movieDBManager.getAll());
             Log.e(MainActivity.LOG_TAG, "Error ", e);
             return null;
         } finally {

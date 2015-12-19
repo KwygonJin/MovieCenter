@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper;
  * Created by KwygonJin on 05.12.2015.
  */
 public class MovieDBHelper extends SQLiteOpenHelper {
-    private static MovieDBHelper mInstance = null;
+    private static MovieDBHelper instance = null;
 
     public static final String MOVIE_TITLE = "movie_title";
     public static final String MOVIE_ID_SQL = "id";
@@ -20,7 +20,7 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     public static final String MOVIE_RATE = "movie_rate";
 
     public static final String DATABASE_NAME = "movie_database";
-    public static final int DATABASE_VERSION = 4;
+    public static final int DATABASE_VERSION = 5;
     public static final String TABLE_NAME_MOVIE = "movies";
 
     private Context context;
@@ -40,12 +40,11 @@ public class MovieDBHelper extends SQLiteOpenHelper {
         this.context = context;
     }
 
-    public static MovieDBHelper getmInstance(Context context) {
-        if(mInstance == null)
-        {
-            mInstance = new MovieDBHelper(context);
-        }
-        return mInstance;
+    public static synchronized  MovieDBHelper getInstance(Context context) {
+        if(instance == null)
+            instance = new MovieDBHelper(context);
+
+        return instance;
     }
 
     @Override
@@ -56,6 +55,6 @@ public class MovieDBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL("DROP TABLE " + TABLE_NAME_MOVIE);
-        db.execSQL(CREATE_TABLE_MOVIE);
+        onCreate(db);
     }
 }

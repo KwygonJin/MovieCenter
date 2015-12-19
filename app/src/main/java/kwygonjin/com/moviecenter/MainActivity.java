@@ -1,9 +1,7 @@
 package kwygonjin.com.moviecenter;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.os.Parcelable;
 import android.os.PersistableBundle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,27 +12,22 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
-import kwygonjin.com.moviecenter.db.MovieDBHelper;
 import kwygonjin.com.moviecenter.db.MovieDBManager;
-import kwygonjin.com.moviecenter.items.Movie;
 import kwygonjin.com.moviecenter.items.MovieListSingleton;
-import kwygonjin.com.moviecenter.network.MovieFetcherAsync;
-import kwygonjin.com.moviecenter.network.MovieHTTPParse;
 import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
 
 public class MainActivity extends AppCompatActivity {
     public static String LOG_TAG = "my_log";
     public static final String APP_PREF = "mysettings";
-    public static final String APP_PREF_KEY = "filmsId";
-    public static final String LIST_STATE_KEY = "myState";
+    public static final String APP_PREF_KEY_FILM_ID = "filmsId";
+    public static final String APP_PREF_KEY_SHOW_FAV = "showOnlyFavorite";
     public static SharedPreferences prefs;
     public static Set<String> favoriteFilmsId = new HashSet<String>();
-    private GridLayoutManager gridLayoutManager;
-    private Parcelable mListState;
+    public static boolean showOnlyFavorite;
+    private MyViewAdapter myViewAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,24 +35,25 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         prefs = getSharedPreferences(MainActivity.APP_PREF, MODE_PRIVATE);
-        favoriteFilmsId = prefs.getStringSet(APP_PREF_KEY, favoriteFilmsId);
-
-        MyViewAdapter myViewAdapter = new MyViewAdapter(MainActivity.this);
+        favoriteFilmsId = prefs.getStringSet(APP_PREF_KEY_FILM_ID, favoriteFilmsId);
+        showOnlyFavorite = prefs.getBoolean(APP_PREF_KEY_SHOW_FAV, showOnlyFavorite);
+        myViewAdapter = new MyViewAdapter(MainActivity.this);
         MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
-        if (movieListSingleton.getMovieList().isEmpty()){
-            if (MovieHTTPRequest.isInternetConnection(MainActivity.this))
-                MovieHTTPRequest.doRequest(MainActivity.this, 1,myViewAdapter);
-            else {
-                MovieDBManager movieDBManager = MovieDBManager.getInstance(MainActivity.this);
-                movieListSingleton.getMovieList().addAll(movieDBManager.getAll());
-            }
-        }
+        //if (movieListSingleton.getMovieList().isEmpty()){
+//            if (MovieHTTPRequest.isInternetConnection(MainActivity.this))
+//                MovieHTTPRequest.doRequest(MainActivity.this, 1,myViewAdapter);
+//            else {
+//                MovieDBManager movieDBManager = MovieDBManager.getInstance(MainActivity.this);
+//                movieListSingleton.getMovieList().addAll(movieDBManager.getAll());
+//            }
+        //}
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
-        gridLayoutManager = new GridLayoutManager(MainActivity.this, 2);
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 2);
         recyclerView.setLayoutManager(gridLayoutManager);
         recyclerView.setAdapter(myViewAdapter);
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -78,30 +72,18 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        mListState = gridLayoutManager.onSaveInstanceState();
-        outState.putParcelable(LIST_STATE_KEY, mListState);
-    }
-
-    @Override
-    public void onRestoreInstanceState(Bundle savedInstanceState, PersistableBundle persistentState) {
-        super.onRestoreInstanceState(savedInstanceState, persistentState);
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        super.onRestoreInstanceState(savedInstanceState);
-        mListState = savedInstanceState.getParcelable(LIST_STATE_KEY);
-    }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (mListState != null) {
-            gridLayoutManager.onRestoreInstanceState(mListState);
+        if (MovieListSingleton.getInstance().getMovieList().isEmpty()){
+            if (MovieHTTPRequest.isInternetConnection(MainActivity.this) && !showOnlyFavorite)
+                MovieHTTPRequest.doRequest(MainActivity.this, 1,myViewAdapter);
+            else {
+                MovieDBManager movieDBManager = MovieDBManager.getInstance(MainActivity.this);
+                MovieListSingleton.getInstance().getMovieList().addAll(movieDBManager.getAll());
+                myViewAdapter.notifyDataSetChanged();
+            }
         }
     }
 }

@@ -2,13 +2,12 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="5dp"
-    android:background="@color/azure">
+    android:padding="5dp">
 
     <ImageView
         android:id="@+id/movieImg"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
+        android:layout_height="match_parent"
         android:scaleType="centerInside" />
 
     <CheckBox
@@ -19,6 +18,8 @@
         android:checked="false"
         android:clickable="true"
         android:layout_gravity="top|right"
-        android:button="@drawable/checkbox_selector" />
+        android:button="@drawable/checkbox_selector"
+        android:background="@android:color/transparent"
+        android:alpha="128" />
 
 </FrameLayout>
