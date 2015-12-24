@@ -31,6 +31,7 @@ import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
 public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewHolder> {
     private Context context;
     private List<Movie> movies = new ArrayList<Movie>();
+    private static MyViewAdapter myViewAdapter = null;
 
     public class MovieViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -78,8 +79,15 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
         }
     }
 
-    public MyViewAdapter(Context context){
+    private MyViewAdapter(Context context){
         this.context = context;
+    }
+
+    public static synchronized MyViewAdapter getInstance(Context context){
+        if(myViewAdapter == null)
+            myViewAdapter = new MyViewAdapter(context);
+
+        return myViewAdapter;
     }
 
     @Override
