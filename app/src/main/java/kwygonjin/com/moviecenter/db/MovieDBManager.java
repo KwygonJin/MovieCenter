@@ -9,6 +9,7 @@ import kwygonjin.com.moviecenter.MainActivity;
 import kwygonjin.com.moviecenter.interfaces.IDataManager;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
@@ -131,8 +132,7 @@ public class MovieDBManager implements IDataManager<Movie> {
         db = openDatabase();
 
         Cursor cursor = db.query(MovieDBHelper.TABLE_NAME_MOVIE, null, null, null, null, null, MovieDBHelper.MOVIE_RATE + " DESC ");
-        MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
-        List<Movie> movies = movieListSingleton.getMovieList();
+        List<Movie> movies = new ArrayList<Movie>();
 
         while (cursor.moveToNext()) {
             boolean isFav = false;

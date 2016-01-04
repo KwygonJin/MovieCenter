@@ -49,12 +49,19 @@
         </LinearLayout>
 
     </LinearLayout>
-
-    <TextView android:layout_width="match_parent"
+    <ScrollView
+        android:id="@+id/SCROLLER_ID"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:id="@+id/movieDescAdv"
-        android:textSize="20sp"
-        android:textColor="@color/white" />
+        android:scrollbars="vertical"
+        android:fillViewport="true">
+        <TextView android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/movieDescAdv"
+            android:textSize="20sp"
+            android:textColor="@color/black" />
+    </ScrollView>
 
 </LinearLayout>

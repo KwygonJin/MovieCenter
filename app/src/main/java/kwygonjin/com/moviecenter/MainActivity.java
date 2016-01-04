@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
         favoriteFilmsId = prefs.getStringSet(APP_PREF_KEY_FILM_ID, favoriteFilmsId);
         showOnlyFavorite = prefs.getBoolean(APP_PREF_KEY_SHOW_FAV, showOnlyFavorite);
         myViewAdapter = MyViewAdapter.getInstance(MainActivity.this);
-        MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
+        //MovieListSingleton movieListSingleton = MovieListSingleton.getInstance();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.rv);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(MainActivity.this, 2);

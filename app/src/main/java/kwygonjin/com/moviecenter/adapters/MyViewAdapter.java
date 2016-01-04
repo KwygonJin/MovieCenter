@@ -106,7 +106,7 @@ public class MyViewAdapter extends RecyclerView.Adapter<MyViewAdapter.MovieViewH
     @Override
     public void onBindViewHolder(MovieViewHolder movieViewHolder, int i) {
         movieViewHolder.setPosition(i);
-        Picasso.with(context).load(MovieListSingleton.getInstance().getMovieList().get(i).getImgURL(Movie.WIDTH_342)).placeholder(R.drawable.place_holder).into(movieViewHolder.movieImg);
+        Picasso.with(context).load(MovieListSingleton.getInstance().getMovieList().get(i).getImgURL(Movie.WIDTH_500)).placeholder(R.drawable.place_holder).into(movieViewHolder.movieImg);
         movieViewHolder.favorite.setChecked(MovieListSingleton.getInstance().getMovieList().get(i).isFavorite());
         if (i == getItemCount()-1 && !MainActivity.showOnlyFavorite)
             MovieHTTPRequest.doRequest(context, (getItemCount()/20) + 1, this);
