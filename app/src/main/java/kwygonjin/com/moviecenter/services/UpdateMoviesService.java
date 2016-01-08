@@ -5,18 +5,13 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.IBinder;
-import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import java.util.concurrent.TimeUnit;
 
 import kwygonjin.com.moviecenter.MainActivity;
 import kwygonjin.com.moviecenter.R;
 import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
-import kwygonjin.com.moviecenter.db.MovieDBManager;
-import kwygonjin.com.moviecenter.items.MovieListSingleton;
 import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
 
 public class UpdateMoviesService extends Service {
@@ -45,7 +40,7 @@ public class UpdateMoviesService extends Service {
     private boolean doUpdate() {
         if (MovieHTTPRequest.isInternetConnection(getApplicationContext()) && !MainActivity.showOnlyFavorite){
             MovieHTTPRequest.doRequest(getApplicationContext(), 1, MyViewAdapter.getInstance(getApplicationContext()));
-            Toast.makeText(getApplicationContext(), "Ohh my godness!", 10).show();
+            //Toast.makeText(getApplicationContext(), "Ohh my godness!", Toast.LENGTH_LONG).show();
             return true;
             }
         else return false;
@@ -64,7 +59,7 @@ public class UpdateMoviesService extends Service {
                 .setTicker(getString(R.string.notification_msg))
                 .setWhen(System.currentTimeMillis())
                 .setAutoCancel(true)
-                .setContentTitle(getApplicationInfo().name)
+                .setContentTitle(getString(R.string.notification_title))
                 .setContentText(getString(R.string.notification_msg));
 
         Notification notification = builder.build();

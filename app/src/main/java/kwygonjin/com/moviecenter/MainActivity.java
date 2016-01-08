@@ -5,11 +5,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Parcelable;
-import android.os.PersistableBundle;
-import android.os.SystemClock;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
@@ -22,6 +19,7 @@ import kwygonjin.com.moviecenter.adapters.MyViewAdapter;
 import kwygonjin.com.moviecenter.db.MovieDBManager;
 import kwygonjin.com.moviecenter.items.MovieListSingleton;
 import kwygonjin.com.moviecenter.network.MovieHTTPRequest;
+import kwygonjin.com.moviecenter.receivers.AutoStartReceiver;
 import kwygonjin.com.moviecenter.services.UpdateMoviesService;
 
 public class MainActivity extends AppCompatActivity {
@@ -52,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(myViewAdapter);
 
         startService(new Intent(MainActivity.this, UpdateMoviesService.class));
+        setRecurringAlarm(MainActivity.this);
     }
 
 
@@ -85,5 +84,16 @@ public class MainActivity extends AppCompatActivity {
                 myViewAdapter.notifyDataSetChanged();
             }
         }
+    }
+
+    private void setRecurringAlarm(Context context) {
+
+        Intent autoStartService = new Intent(context, AutoStartReceiver.class);
+        PendingIntent recurringAutoStartService = PendingIntent.getBroadcast(context,
+                0, autoStartService, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager alarms = (AlarmManager) getSystemService(
+                Context.ALARM_SERVICE);
+        alarms.setRepeating(AlarmManager.RTC,
+                System.currentTimeMillis() + (1000 * 60 * 1), 1000 * 60 * 1,recurringAutoStartService);
     }
 }
